@@ -1,0 +1,94 @@
+plugins:
+  required:
+    git: 3.9.3
+    pipeline-model-definition: 1.3.4.1
+    pipeline-stage-step: 2.3
+    pipeline-maven: 3.6.7
+    workflow-aggregator: 2.6
+    junit: 1.27
+    blueocean: latest
+    job-dsl: latest
+    jobConfigHistory: 2.19
+    gradle: 1.30
+    warnings-ng: 3.0.3
+  sites:
+  - id: "default"
+    url: "https://updates.jenkins.io/update-center.json"
+jenkins:
+  systemMessage: "Welcome to Jenkins." 
+  agentProtocols:
+  - "JNLP4-connect"
+  - "Ping"
+  securityRealm:
+    local:
+      allowsSignup: false
+      enableCaptcha: false
+      users:
+      - id: adminx
+        password: ${JENKINS_PASS:-passw0rd}
+  authorizationStrategy:
+    globalMatrix:
+      grantedPermissions:
+      - "Overall/Read:anonymous"
+      - "Overall/Read:adminx"
+      - "Overall/Administer:adminx"
+  crumbIssuer:
+    standard:
+      excludeClientIPFromCrumb: false
+  disableRememberMe: false
+  mode: NORMAL
+  numExecutors: 3
+  primaryView:
+    all:
+      name: "all"
+  quietPeriod: 5
+  scmCheckoutRetryCount: 2
+  slaveAgentPort: 50000
+  views:
+  - all:
+      name: "all"
+tool:
+  dockerTool:
+    installations:
+    - name: "docker"
+  git:
+    installations:
+    - home: "git"
+      name: "Default"
+  jdk:
+    installations:
+    - home: "/docker-java-home"
+      name: "jdk"
+  maven:
+    installations:
+    - name: "maven"
+      properties:
+      - installSource:
+          installers:
+          - maven:
+              id: "3.5.4"
+  gradle:
+    installations:
+    - name: "Default"
+      properties:
+      - installSource:
+          installers:
+          - gradleInstaller:
+              id: "5.4"
+jobs:
+  - script: >
+      pipelineJob('pipeline') {
+          definition {
+              cpsScm {
+                  scriptPath 'Jenkinsfile'
+                  scm {
+                    git {
+                        remote { url 'https://github.com/rgaryburgess/lv-test.git' }
+                        branch 'master'
+                        extensions {}
+                    }
+                  }
+              }
+          }
+      }
+

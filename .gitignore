@@ -5,6 +5,7 @@ target/*
 .factorypath
 .attach_pid*
 .idea
+.gradle
 *.iml
 /target
 .sts4-cache/
